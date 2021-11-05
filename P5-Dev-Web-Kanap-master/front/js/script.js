@@ -36,26 +36,27 @@ let api = "http://localhost:3000/api/products";
 //   });
 // };
 
-// //const uneFonction = () => {
-//   // ... plein de choses mais pas trop
-//   return quelqueChose
-// }
-
-// const uneAutreFonction = (data) => {
-//   // ... plein de choses qui utilisent la data
-// }
-
-// const data = uneFunction()
-// uneAutreFonction(data)
 const fetchApi = () => {
-  fetch(api)
-    .then((res) => {
-      console.log(res);
-      return res.json();
-    })
-    .then((data) => {
-      let array = data;
-      console.log(array);
-      return array;
-    });
+  return fetch(api)
+    .then((response) => response.json())
+    .catch((err) => console.log("erreur : " + err));
 };
+
+/*const displayArticle =*/ (() => {
+  let res = fetchApi().then((results) => {
+    let data = results;
+    for (let element of data) {
+      //Ajout des différents articles de façon dynamique
+      document.querySelector(
+        "#items"
+      ).innerHTML += ` <a href="./product.html?id=${element._id}">
+            <article>
+              <img src="${element.imageUrl}" alt="${element.altTxt}">
+              <h3 class="productName">${element.name}</h3>
+              <p class="productDescription">${element.description}</p>
+            </article>
+          </a>`;
+    }
+  });
+})();
+// displayArticle();

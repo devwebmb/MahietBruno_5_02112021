@@ -1,13 +1,23 @@
 // http://localhost:3000/api/products
+
 let api = "http://localhost:3000/api/products";
 let urlData = new URLSearchParams(window.location.search);
 let urlId = urlData.get("id");
 
-//Récupération des données, de l'url, ajout dans le code html de la page product de façon dynamique
-fetch(api).then((res) =>
-  res.json().then(function (data) {
-    for (let element of data) {
-      console.log(data);
+let selectedProduct;
+
+//récupération des données dans l'api
+const fetchApi = () => {
+  return fetch(api)
+    .then((response) => response.json())
+    .catch((err) => console.log("erreur : " + err));
+};
+
+//Insertion des données dans le dom, product.html et dans le panier
+const displayProduct = () => {
+  let res = fetchApi().then((results) => {
+    let data = results;
+    for (element of data) {
       if (element._id === urlId) {
         document.querySelector(
           "body > main > div > section > article > div.item__img"
@@ -19,12 +29,13 @@ fetch(api).then((res) =>
         ).innerHTML = `${element.description}`;
         let colors = element.colors;
         for (i = 0; i < colors.length; i++) {
-          console.log(colors[i]);
           document.querySelector(
             "#colors"
           ).innerHTML += `<option value=${colors[i]}>${colors[i]}</option>`;
         }
       }
     }
-  })
-);
+  });
+};
+
+displayProduct();
