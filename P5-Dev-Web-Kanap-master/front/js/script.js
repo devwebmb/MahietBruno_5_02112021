@@ -43,7 +43,7 @@ const fetchApi = () => {
 };
 
 /*const displayArticle =*/ (() => {
-  let res = fetchApi().then((results) => {
+  fetchApi().then((results) => {
     let data = results;
     for (let element of data) {
       //Ajout des différents articles de façon dynamique
