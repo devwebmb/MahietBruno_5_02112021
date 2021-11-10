@@ -4,7 +4,12 @@ let api = "http://localhost:3000/api/products";
 let urlData = new URLSearchParams(window.location.search);
 // console.log(urlData);
 let urlId = urlData.get("id");
-// console.log(urlId);
+let productId = urlId;
+let description;
+let kanapName;
+let altTxt;
+let imageUrl;
+let price;
 
 //récupération des données dans l'api
 const fetchApi = () => {
@@ -13,6 +18,19 @@ const fetchApi = () => {
     .catch((err) => console.log("erreur : " + err));
 };
 
+//récupération des données d'un produit
+fetchApi().then((results) => {
+  let data = results;
+  for (let element of data) {
+    if (element._id === productId) {
+      description = element.description;
+      kanapName = element.name;
+      altTxt = element.altTxt;
+      imageUrl = element.imageUrl;
+      price = element.price;
+    }
+  }
+});
 //Insertion des données dans le dom, product.html et dans le panier
 const displayProduct = () => {
   fetchApi().then((data) => {
@@ -38,40 +56,62 @@ const displayProduct = () => {
 };
 
 displayProduct();
-// let productId;
-
-// //récupérer la couleur
-// let colorChoice;
-// document.querySelector("#colors").addEventListener("change", (event) => {
-//   colorChoice = event.target.value;
-// });
-
-// //Récupérer la quantité sélectionnée
-// let quantityChoice;
-// document.querySelector("#quantity").addEventListener("input", (event) => {
-//   quantityChoice = event.target.value;
-// });
-
-// //Récupération et stockage des données à envoyer au localstorage
-// let addToStorage = {
-//   id: productId,
-//   color: colorChoice,
-//   quantity: quantityChoice,
-// };
 
 document.querySelector("#addToCart").addEventListener("click", () => {
+  //récupérer la couleur choisie
   let color = document.querySelector("#colors").value;
-  console.log(color);
+
+  //récupérer la quantité choisie
+  let quantity = document.querySelector("#quantity").value;
+
+  //tester que la couleur et la quantité ont été choisies
   if (color == "") {
     alert("Veuillez choisir une couleur avant de d'ajouter au panier");
     return;
+  } else if (quantity < 1 || quantity > 100) {
+    alert("Veuillez choisir une quantité de produit comprise entre 1 et 100");
+    return;
   }
-  localStorage.setItem("product", JSON.stringify(addToStorage));
+
+  // stocker dans un objet les variables du produit
+  let dataStorage = {
+    id: productId,
+    color: color,
+    quantity: quantity,
+    description: description,
+    imageUrl: imageUrl,
+    price: price,
+    altTxt: altTxt,
+    kanapName: kanapName,
+  };
+
+  // Créer une variable de contenu du localstorage
+  let storageContent = JSON.parse(localStorage.getItem("product"));
+
+  //ajouter au localstrorage
+  const addToStorage = () => {
+    if (storageContent) {
+      const res = storageContent.find(
+        (element) => element.id === productId && element.color === color
+      );
+      if (res) {
+        let newQuantity =
+          parseInt(res.quantity) + parseInt(dataStorage.quantity);
+        res.quantity = newQuantity;
+        localStorage.setItem("product", JSON.stringify(storageContent));
+        alert("Votre produit a bien été mis dans votre panier");
+      } else {
+        storageContent.push(dataStorage);
+        localStorage.setItem("product", JSON.stringify(storageContent));
+        alert("Votre produit a bien été mis dans votre panier");
+      }
+    } else {
+      storageContent = [];
+      storageContent.push(dataStorage);
+      localStorage.setItem("product", JSON.stringify(storageContent));
+      alert("Votre produit a bien été mis dans votre panier");
+    }
+  };
+
+  addToStorage();
 });
-
-// displayProduct();
-
-//methode find js https://www.digitalocean.com/community/tutorials/js-array-search-methods-fr#find
-// const alligator = ["thick scales", 80, "4 foot tail", "rounded snout"];
-
-// alligator.find(el => el.length < 12); // returns '4 foot tail'
