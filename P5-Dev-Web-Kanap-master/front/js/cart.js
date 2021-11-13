@@ -28,6 +28,7 @@ const cartDisplay = () => {
     <div class="cart__item__content">
       <div class="cart__item__content__titlePrice">
         <h2>${element.kanapName}</h2>
+        <p>(${element.color})</p><br>
         <p>${element.price * element.quantity},00€</p>
       </div>
       <div class="cart__item__content__settings">
@@ -57,4 +58,29 @@ const cartDisplay = () => {
   document.querySelector("#totalPrice").innerHTML = `${totalPrice}`;
 };
 
+const toModifyQuantity = () => {
+  let quantity = document.querySelectorAll(".itemQuantity");
+
+  for (let i = 0; i < quantity.length; i++) {
+    quantity[i].addEventListener("change", (e) => {
+      e.preventDefault();
+
+      let toModifyQuantity = storageContent[i].quantity;
+      let newQauntityvalue = quantity[i].value;
+
+      const res = storageContent.find(
+        (el) => el.newQauntityvalue !== toModifyQuantity
+      );
+      res.quantity = newQauntityvalue;
+      storageContent[i].quantity = res.quantity;
+      console.log(res.quantity);
+
+      localStorage.setItem("product", JSON.stringify(storageContent));
+
+      location.reload();
+    });
+  }
+};
+
 cartDisplay();
+toModifyQuantity();
