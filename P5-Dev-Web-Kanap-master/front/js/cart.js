@@ -82,5 +82,21 @@ const toModifyQuantity = () => {
   }
 };
 
+const deleteProduct = () => {
+  let deleteButton = document.querySelectorAll(".deleteItem");
+
+  for (let i = 0; i < deleteButton.length; i++) {
+    deleteButton[i].addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log(storageContent);
+      let idToDelete = storageContent[i].id;
+      let colorToDelete = storageContent[i].color;
+
+      // location.reload();
+    });
+  }
+};
+
 cartDisplay();
 toModifyQuantity();
+deleteProduct();
