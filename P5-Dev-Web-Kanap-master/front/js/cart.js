@@ -88,15 +88,43 @@ const deleteProduct = () => {
   for (let i = 0; i < deleteButton.length; i++) {
     deleteButton[i].addEventListener("click", (e) => {
       e.preventDefault();
-      console.log(storageContent);
+
       let idToDelete = storageContent[i].id;
       let colorToDelete = storageContent[i].color;
+      storageContent = storageContent.filter(
+        (el) => el.id !== idToDelete || el.color !== colorToDelete
+      );
 
-      // location.reload();
+      localStorage.setItem("product", JSON.stringify(storageContent));
+
+      alert("Votre produit a été retiré du panier");
+
+      location.reload();
     });
   }
+};
+
+const order = () => {
+  let order = document.querySelector("#order");
+
+  order.addEventListener("click", () => {
+    let firstName = document.querySelector("#firstName").value;
+    let lastName = document.querySelector("#lastName").value;
+    let address = document.querySelector("#address").value;
+    let city = document.querySelector("#city").value;
+    let email = document.querySelector("#email").value;
+    let arrayUserData;
+
+    let firstNameReg = firstName.match(/^[a-z ,.'-éè¨^]+$/i);
+    let lastNameReg = lastName.match(/^[a-z ,.'-éè¨^]+$/i);
+    let addressReg = address.match(/^[a-z0-9 ,.'-éè¨^]+$/i);
+    let cityReg = city.match(/^[a-z ,.'-éè¨^]+$/i);
+
+    console.log(firstNameReg);
+  });
 };
 
 cartDisplay();
 toModifyQuantity();
 deleteProduct();
+order();
