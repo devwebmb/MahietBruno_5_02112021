@@ -8,7 +8,6 @@ const fetchApi = () => {
 };
 
 let storageContent = JSON.parse(localStorage.getItem("product"));
-
 // créer et insérer des éléments dans la page panier
 const cartDisplay = () => {
   //déclaration des variables
@@ -105,22 +104,66 @@ const deleteProduct = () => {
 };
 
 const order = () => {
-  let order = document.querySelector("#order");
-
-  order.addEventListener("click", () => {
+  let order = document.querySelector("#formOrder");
+  let products = [];
+  for (let i = 0; i < storageContent.length; i++) {
+    products.push(storageContent[i].id);
+  }
+  order.addEventListener("submit", (e) => {
+    e.preventDefault();
     let firstName = document.querySelector("#firstName").value;
     let lastName = document.querySelector("#lastName").value;
     let address = document.querySelector("#address").value;
     let city = document.querySelector("#city").value;
     let email = document.querySelector("#email").value;
-    let arrayUserData;
+    let contact = {};
 
-    let firstNameReg = firstName.match(/^[a-z ,.'-éè¨^]+$/i);
-    let lastNameReg = lastName.match(/^[a-z ,.'-éè¨^]+$/i);
-    let addressReg = address.match(/^[a-z0-9 ,.'-éè¨^]+$/i);
-    let cityReg = city.match(/^[a-z ,.'-éè¨^]+$/i);
+    let regName = new RegExp("^[a-z '-.éèôï]+$", "i");
+    let regAddress = new RegExp("^[a-z0-9 '-.éèôï]+$", "i");
+    let regEmail = new RegExp("^([a-zA-Z0-9.-_])+@([[a-z)+.([a-z])+$", "g");
 
-    console.log(firstNameReg);
+    if (regName.test(firstName)) {
+      if (regName.test(lastName)) {
+        if (regAddress.test(address)) {
+          if (regName.test(city)) {
+            if (regEmail.test(email)) {
+              contact = {
+                firstname: firstName,
+                lastname: lastName,
+                address: address,
+                city: city,
+                email: email,
+              };
+              let newOrder = { contact, products };
+              console.log(newOrder);
+
+              fetch("http://localhost:3000/api/products/order", {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newOrder),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(data);
+                  /* window.location.href = "confirmation.html?id=" + data.orderId;*/
+                });
+            } else {
+              alert("Entrer une adresse mail valide");
+            }
+          } else {
+            alert("Entrer un nom de ville correcte");
+          }
+        } else {
+          alert("Veuillez écrire une adresse correcte");
+        }
+      } else {
+        alert("Entrer un nom valide");
+      }
+    } else {
+      alert("Entrer un prénom valide");
+    }
   });
 };
 
@@ -128,3 +171,12 @@ cartDisplay();
 toModifyQuantity();
 deleteProduct();
 order();
+/*let body = {
+  contact: {
+      firstName: "toto"
+  },
+  produits: [
+      "zezrzr-zerzr-zerzer",
+      "zererz-dfhfgh-gfhf"
+  ]
+}*/
