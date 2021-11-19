@@ -1,5 +1,6 @@
 // http://localhost:3000/api/products
 
+// Déclarations des variables
 let api = "http://localhost:3000/api/products";
 let urlData = new URLSearchParams(window.location.search);
 // console.log(urlData);

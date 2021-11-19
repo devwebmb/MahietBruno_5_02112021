@@ -1,12 +1,14 @@
 // http://localhost:3000/api/products
 let api = "http://localhost:3000/api/products";
 
+// récupérer des données das l'api
 const fetchApi = () => {
   return fetch(api)
     .then((response) => response.json())
     .catch((err) => console.log("erreur : " + err));
 };
 
+// Créer une variable de contenu du localstorage
 let storageContent = JSON.parse(localStorage.getItem("product"));
 // créer et insérer des éléments dans la page panier
 const cartDisplay = () => {
@@ -57,6 +59,7 @@ const cartDisplay = () => {
   document.querySelector("#totalPrice").innerHTML = `${totalPrice}`;
 };
 
+// fonction de modification du panier (quantité)
 const toModifyQuantity = () => {
   let quantity = document.querySelectorAll(".itemQuantity");
 
@@ -81,6 +84,7 @@ const toModifyQuantity = () => {
   }
 };
 
+// fonction pour supprimer un élément du panier
 const deleteProduct = () => {
   let deleteButton = document.querySelectorAll(".deleteItem");
 
@@ -103,6 +107,7 @@ const deleteProduct = () => {
   }
 };
 
+// fonction pour vérifier le formulaire et de post vers l'api
 const order = () => {
   let order = document.querySelector("#formOrder");
   let products = [];
@@ -128,14 +133,13 @@ const order = () => {
           if (regName.test(city)) {
             if (regEmail.test(email)) {
               contact = {
-                firstname: firstName,
-                lastname: lastName,
+                firstName: firstName,
+                lastName: lastName,
                 address: address,
                 city: city,
                 email: email,
               };
               let newOrder = { contact, products };
-              console.log(newOrder);
 
               fetch("http://localhost:3000/api/products/order", {
                 method: "post",
@@ -146,23 +150,32 @@ const order = () => {
               })
                 .then((response) => response.json())
                 .then((data) => {
-                  console.log(data);
-                  /* window.location.href = "confirmation.html?id=" + data.orderId;*/
+                  window.location.href = "confirmation.html?id=" + data.orderId;
                 });
             } else {
-              alert("Entrer une adresse mail valide");
+              document.querySelector(
+                "#emailErrorMsg"
+              ).innerHTML = `Entrer une adresse mail valide`;
             }
           } else {
-            alert("Entrer un nom de ville correcte");
+            document.querySelector(
+              "#cityErrorMsg"
+            ).innerHTML = `Entrer un nom de ville correcte`;
           }
         } else {
-          alert("Veuillez écrire une adresse correcte");
+          document.querySelector(
+            "#addressErrorMsg"
+          ).innerHTML = `Veuillez écrire une adresse correcte`;
         }
       } else {
-        alert("Entrer un nom valide");
+        document.querySelector(
+          "#lastNameErrorMsg"
+        ).innerHTML = `Entrer un nom valide`;
       }
     } else {
-      alert("Entrer un prénom valide");
+      document.querySelector(
+        "#firstNameErrorMsg"
+      ).innerHTML = `Entrer un prénom valide`;
     }
   });
 };
@@ -171,12 +184,3 @@ cartDisplay();
 toModifyQuantity();
 deleteProduct();
 order();
-/*let body = {
-  contact: {
-      firstName: "toto"
-  },
-  produits: [
-      "zezrzr-zerzr-zerzer",
-      "zererz-dfhfgh-gfhf"
-  ]
-}*/
